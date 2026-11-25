@@ -22,25 +22,31 @@ st.set_page_config(page_title="대한민국 웰니스 브랜드 6 심층 비교"
 # 신뢰감: 네이비(주색) + 쿨 그레이(배경·선) + 흰 카드. 강조색은 네이비 하나만 쓰고,
 # 브랜드 색은 데이터에만 쓴다. 브랜드 6색은 흰 배경 기준 색약 구분 검사를 통과한 조합.
 BRANDS = ["본투윈", "젝시믹스", "안다르", "뮬라웨어", "HDEX", "압도"]
-COLOR = {"본투윈": "#257de0", "젝시믹스": "#f47230", "안다르": "#00b894",
-         "뮬라웨어": "#f2a600", "HDEX": "#ee7fac", "압도": "#008a17"}
+COLOR = {"본투윈": "#1f6fd6", "젝시믹스": "#e0703a", "안다르": "#2a9d7f",
+         "뮬라웨어": "#c99a2e", "HDEX": "#c75b86", "압도": "#4f8f3a"}
 SLUG = {"본투윈": "borntowin", "젝시믹스": "xexymix", "안다르": "andar",
         "뮬라웨어": "mulawear", "HDEX": "hdex", "압도": "abdo"}
-NAVY = "#16325c"
-PRIMARY = "#1f4e8c"
-BG = "#f5f7fa"
+NAVY = "#000000"
+PRIMARY = "#000000"
+BG = "#ffffff"
 SURFACE = "#ffffff"
-TEXT = "#1b2433"
-MUTED = "#5b6472"
-LINE = "#e3e7ee"
-GRID = "#eceff4"
-AXIS = "#c2c8d2"
-NEUTRAL = "#8a94a6"
+TEXT = "#000000"
+MUTED = "#757575"
+LINE = "#e5e5e5"
+GRID = "#f0f0f0"
+AXIS = "#bdbdbd"
+NEUTRAL = "#9e9e9e"
+C_NOW = "#000000"
+C_WHY = "#0078ff"
+C_NEXT = "#ff6a00"
+C_UP = "#0078ff"
+C_DOWN = "#f31110"
+RAISED = "#f5f5f5"
 AMBER = "#b7791f"
-EVID = {"데이터": ("#e6efe8", "#1d6b35"), "보도": ("#eef2f8", "#1f4e8c"), "가설": ("#fbf1e1", "#8a5a12")}
+EVID = {"데이터": ("#f1f1f1", "#000000"), "보도": ("#f1f1f1", "#555555"), "가설": ("#fff3e8", "#c25100")}
 FONT = "Pretendard, -apple-system, 'Apple SD Gothic Neo', sans-serif"
-DIVERGING = [[0, "#eb7b7b"], [0.5, "#f1f2f4"], [1, "#6aabf1"]]
-STRENGTH = {"강함": ("#e6efe8", "#1d6b35"), "보통": ("#eef2f8", "#1f4e8c"), "약함": ("#f6efe4", "#8a5a12")}
+DIVERGING = [[0, "#e5534b"], [0.5, "#f7f7f7"], [1, "#0078ff"]]
+STRENGTH = {"강함": ("#000000", "#ffffff"), "보통": ("#e5e5e5", "#000000"), "약함": ("#ffffff", "#757575")}
 
 BRAND_INFO = {
     "본투윈": ("2021", "운동 문화를 일상복으로 푼 프리미엄 스포티 캐주얼"),
@@ -80,7 +86,7 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .card .name {{ font-weight: 700; font-size: 1rem; color: {TEXT}; }}
 .card .meta {{ color: {MUTED}; font-size: .76rem; margin-top: 2px; }}
 .card .tag {{ display: inline-block; margin-top: 8px; font-size: .72rem; padding: 2px 8px; border-radius: 4px;
-              background: #eef2f8; color: {PRIMARY}; font-weight: 600; }}
+              background: #eaf0fb; color: {PRIMARY}; font-weight: 600; }}
 .card .desc {{ color: {MUTED}; font-size: .8rem; margin-top: 8px; line-height: 1.45; }}
 .section-label {{ color: {MUTED}; font-size: .78rem; font-weight: 700; letter-spacing: .08em; margin: 1.2rem 0 .5rem; }}
 .uses {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }}
@@ -97,9 +103,9 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .kpi .label {{ color: {MUTED}; font-size: .8rem; }}
 .kpi .value {{ font-size: 1.7rem; font-weight: 800; margin-top: 4px; color: {NAVY}; }}
 .kpi .sub {{ color: {MUTED}; font-size: .8rem; margin-top: 2px; }}
-.insight {{ background: #eef2f8; border-left: 3px solid {PRIMARY}; padding: 10px 14px; margin: .4rem 0 1rem; color: {TEXT};
+.insight {{ background: #eaf0fb; border-left: 3px solid {PRIMARY}; padding: 10px 14px; margin: .4rem 0 1rem; color: {TEXT};
             line-height: 1.6; border-radius: 0 6px 6px 0; }}
-.verdict {{ background: {SURFACE}; border: 1px solid {LINE}; border-top: 3px solid {NAVY}; border-radius: 10px; padding: 18px 20px; }}
+.verdict {{ background: {SURFACE}; border: 1px solid {LINE}; border-top: 3px solid {PRIMARY}; border-radius: 10px; padding: 18px 20px; }}
 .verdict h4 {{ margin: 0 0 4px; color: {NAVY}; }}
 .verdict .lead {{ color: {MUTED}; font-size: .82rem; margin-bottom: 10px; }}
 .vi {{ padding: 9px 0; border-top: 1px solid {GRID}; font-size: .88rem; line-height: 1.5; color: {TEXT}; }}
@@ -110,7 +116,7 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .tl .it {{ margin-bottom: 12px; position: relative; color: {TEXT}; }}
 .tl .it::before {{ content: ""; position: absolute; left: -22px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px {BG}; }}
 .tl .d {{ color: {MUTED}; font-size: .78rem; }}
-.tl .t {{ font-size: .7rem; padding: 1px 7px; border-radius: 4px; background: #eef2f8; color: {PRIMARY}; margin-left: 6px; }}
+.tl .t {{ font-size: .7rem; padding: 1px 7px; border-radius: 4px; background: #eaf0fb; color: {PRIMARY}; margin-left: 6px; }}
 .stTabs [data-baseweb="tab-list"] {{ gap: 6px; border-bottom: 1px solid {LINE}; }}
 .stTabs [data-baseweb="tab"] {{ font-weight: 600; }}
 .arch {{ background: {SURFACE}; border: 1px solid {LINE}; border-radius: 10px; padding: 16px 18px; height: 100%; }}
@@ -119,14 +125,14 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .story {{ border-top: 1px solid {GRID}; padding-top: 14px; margin-top: 14px; }}
 .story .lg img {{ max-height: 26px; max-width: 120px; }}
 .story .hero {{ font-weight: 800; color: {TEXT}; font-size: 1rem; margin-top: 8px; line-height: 1.35; }}
-.story .proof {{ font-size: .74rem; color: {PRIMARY}; background: #eef2f8; display: inline-block; padding: 1px 7px; border-radius: 4px; margin-top: 4px; }}
+.story .proof {{ font-size: .74rem; color: {PRIMARY}; background: #eaf0fb; display: inline-block; padding: 1px 7px; border-radius: 4px; margin-top: 4px; }}
 .story dl {{ margin: 8px 0 0; font-size: .82rem; line-height: 1.5; }}
 .story dt {{ color: {MUTED}; font-size: .72rem; font-weight: 700; letter-spacing: .04em; margin-top: 6px; }}
 .story dd {{ margin: 0; color: {TEXT}; }}
 .story .src {{ font-size: .72rem; }}
 .story .src a {{ color: {MUTED}; }}
 .ev-chip {{ display: inline-block; font-size: .68rem; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: .02em; margin-right: 6px; }}
-.thesis {{ background: {NAVY}; color: #fff; border-radius: 10px; padding: 18px 22px; margin: .4rem 0 1rem; }}
+.thesis {{ background: #173566; color: #fff; border: 1px solid {LINE}; border-radius: 10px; padding: 18px 22px; margin: .4rem 0 1rem; }}
 .thesis .k {{ font-size: .72rem; letter-spacing: .12em; font-weight: 700; color: #b9c9e3; }}
 .thesis .t {{ font-size: 1.12rem; line-height: 1.6; margin-top: 4px; }}
 .thesis b {{ color: #fff; border-bottom: 2px solid #6aabf1; }}
@@ -145,7 +151,98 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .pimg img {{ height: 100%; width: 100%; object-fit: contain; }}
 .pimg-lg {{ background: #f1f3f6; border-radius: 10px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid {LINE}; }}
 .pimg-lg img {{ width: 100%; height: 100%; object-fit: contain; }}
+/* ── pro layer ── */
+[data-testid="stHeader"] {{ background: transparent !important; }}
+.stApp {{ background:
+   radial-gradient(1200px 500px at 85% -10%, rgba(37,99,235,.07), transparent 60%),
+   radial-gradient(900px 420px at -5% 5%, rgba(8,145,178,.06), transparent 60%),
+   {BG} !important; }}
+.hero.topbar {{ border-bottom: 1px solid rgba(15,23,42,.08); }}
+.eyebrow {{ color: {C_NEXT} !important; display: flex; align-items: center; gap: 8px; }}
+.pulse {{ width: 7px; height: 7px; border-radius: 50%; background: {C_UP}; box-shadow: 0 0 0 4px rgba(52,211,153,.18); display: inline-block; }}
+.hero h1 .grad {{ background: linear-gradient(90deg, {C_NOW}, {C_WHY} 55%, {C_NEXT}); -webkit-background-clip: text; background-clip: text; color: transparent; }}
+.chip {{ background: #ffffff !important; border-color: rgba(15,23,42,.09) !important; }}
+.card {{ background: linear-gradient(180deg, color-mix(in srgb, var(--c) 6%, {SURFACE}), {SURFACE} 55%) !important; border-color: rgba(15,23,42,.08) !important;
+         box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 24px rgba(15,23,42,.06); }}
+.card .tag {{ background: color-mix(in srgb, var(--c) 22%, transparent) !important; color: color-mix(in srgb, var(--c) 75%, black) !important; }}
+.thesis {{ background: linear-gradient(120deg, #0f172a 0%, #13294b 55%, #1e3a8a 100%) !important; border: 1px solid rgba(15,23,42,.09) !important; position: relative; overflow: hidden; }}
+.thesis::after {{ content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient({C_NOW}, {C_WHY}, {C_NEXT}); }}
+.thesis .k {{ color: {C_NEXT} !important; }}
+.thesis b {{ border-bottom-color: {C_NEXT} !important; }}
+.phasebox .phase {{ padding-bottom: 8px; border-bottom: 2px solid var(--pc); margin-bottom: 12px; }}
+.phasebox .dot {{ width: 9px; height: 9px; border-radius: 50%; background: var(--pc); display: inline-block; align-self: center; }}
+.phasebox .pk {{ color: var(--pc) !important; }}
+.phasebox .find {{ border-left: 3px solid var(--pc); background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 8%, {SURFACE}), {SURFACE} 60%) !important; }}
+.phasebox .find .big {{ color: var(--pc) !important; font-size: 1.9rem !important; }}
+.find, .verdict, .use, .kpi, .trend, .arch {{ border-color: rgba(15,23,42,.08) !important; box-shadow: 0 8px 24px rgba(15,23,42,.05); }}
+.verdict {{ background: linear-gradient(180deg, {RAISED}, {SURFACE}) !important; border-top: 3px solid {C_NEXT} !important; }}
+.verdict h4 {{ color: {NAVY} !important; }}
+.vi b {{ color: {NAVY}; }}
+.use .who {{ color: {C_NOW} !important; }}
+.stTabs [aria-selected="true"] {{ color: {C_NEXT} !important; }}
+.stTabs [data-baseweb="tab-highlight"] {{ background: {C_NEXT} !important; }}
 .foot {{ color: {MUTED}; font-size: .76rem; border-top: 1px solid {LINE}; margin-top: 2rem; padding-top: 12px; }}
+/* ── musinsa layer ── */
+.stApp {{ background: #ffffff !important; overflow-x: hidden; }}
+[data-testid="stHeader"] {{ background: #000 !important; }}
+[data-testid="stHeader"] * {{ color: #fff !important; }}
+.block-container {{ padding-top: calc(3.75rem - 16px) !important; }}
+.mbar {{ background: #000; color: #fff; margin: 0 calc(50% - 50vw); padding: 14px calc(50vw - 50% + 0px); display: flex; align-items: center; gap: 22px;
+        font-weight: 800; font-size: 1.05rem; letter-spacing: .01em; }}
+.mbar span {{ color: #fff; }}
+.mbar .ham {{ font-weight: 400; font-size: 1.2rem; }}
+.mbar .sep {{ width: 1px; height: 18px; background: #666; margin: 0 -6px; }}
+.mbar .right {{ margin-left: auto; font-size: .82rem; font-weight: 500; color: #9e9e9e !important; }}
+@media (max-width: 500px) {{ .mbar .right {{ display: none; }} }}
+.hero.topbar {{ border-bottom: 0 !important; padding-top: 22px; }}
+.hero h1 {{ font-weight: 800 !important; color: #000 !important; }}
+.chip {{ background: transparent !important; border: 0 !important; padding: 0 !important; color: #9e9e9e !important; font-size: .86rem !important; border-radius: 0 !important; margin-right: 10px; }}
+.chip b {{ color: #555 !important; font-weight: 600 !important; }}
+.cards {{ gap: 0 !important; border-top: 1px solid #e5e5e5; }}
+.card {{ background: #fff !important; border: 0 !important; border-right: 1px solid #f0f0f0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 0 16px !important; }}
+.card:last-child {{ border-right: 0 !important; }}
+.card::before {{ display: none; }}
+.card .logo {{ background: #f4f4f4; height: 96px !important; margin: 0 0 12px !important; justify-content: center; }}
+.card .name, .card .meta, .card .tag, .card .desc {{ margin-left: 14px; margin-right: 14px; }}
+.card .name {{ font-size: .95rem !important; font-weight: 800 !important; }}
+.card .tag {{ background: transparent !important; padding: 0 !important; color: var(--c) !important; font-weight: 700; }}
+.card .tag::before {{ content: "●"; margin-right: 4px; font-size: .6rem; vertical-align: 2px; }}
+.card .desc {{ color: #000 !important; }}
+.stTabs [data-baseweb="tab-list"] {{ gap: 22px !important; border-bottom: 1px solid #e5e5e5 !important; }}
+.stTabs [data-baseweb="tab"] {{ color: #757575 !important; font-weight: 500 !important; font-size: 1.02rem; }}
+.stTabs [aria-selected="true"] {{ color: #000 !important; font-weight: 800 !important; }}
+.stTabs [data-baseweb="tab-highlight"] {{ background: #000 !important; height: 2px !important; }}
+.thesis {{ background: #000 !important; border: 0 !important; border-radius: 0 !important; }}
+.thesis::after {{ display: none; }}
+.thesis .k {{ color: #9e9e9e !important; }}
+.thesis b {{ border-bottom: 0 !important; color: #fff; background: linear-gradient(transparent 62%, rgba(0,120,255,.55) 62%); }}
+.phasebox .phase {{ background: #f1f1f1; padding: 12px 14px !important; border-bottom: 0 !important; margin-bottom: 0 !important; }}
+.phasebox .pk {{ color: #000 !important; }}
+.phasebox .dot {{ background: var(--pc) !important; }}
+.phasebox .find {{ background: #fff !important; border: 0 !important; border-bottom: 1px solid #e5e5e5 !important; border-radius: 0 !important; box-shadow: none !important; margin-top: 0 !important; }}
+.phasebox .find .big {{ color: #000 !important; }}
+.phasebox .find .big::after {{ content: ""; display: block; width: 18px; height: 2px; background: var(--pc); margin-top: 6px; }}
+.find, .verdict, .use, .kpi, .trend, .arch {{ border-radius: 0 !important; box-shadow: none !important; border-color: #e5e5e5 !important; }}
+.verdict {{ background: #fff !important; border: 0 !important; border-top: 2px solid #000 !important; padding: 14px 0 !important; }}
+.vi {{ border-top-color: #f0f0f0 !important; }}
+.st-chip {{ border-radius: 2px !important; border: 1px solid #000; }}
+.ev-chip {{ border-radius: 2px !important; }}
+.section-label {{ color: #000 !important; font-size: .95rem !important; letter-spacing: 0 !important; background: #f1f1f1; padding: 10px 14px; }}
+.uses {{ gap: 0 !important; }}
+.use {{ border: 0 !important; border-right: 1px solid #f0f0f0 !important; }}
+.use .who {{ color: #000 !important; font-weight: 800 !important; }}
+.insight, .story .proof, .tl .t {{ background: #f1f1f1 !important; color: #000 !important; border-radius: 0 !important; }}
+.insight {{ border-left-color: #000 !important; }}
+.pimg, .pimg-lg {{ border-radius: 0 !important; }}
+.pulse {{ display: none; }}
+@media (max-width: 600px) {{ .cards {{ grid-template-columns: 1fr 1fr !important; }} .card .logo {{ height: 72px !important; }} .card {{ border-bottom: 1px solid #f0f0f0 !important; }} }}
+.arch {{ padding: 0 !important; }}
+.arch h5 {{ background: #000; color: #fff !important; padding: 11px 16px; font-size: .98rem !important; }}
+.arch .sum {{ padding: 10px 16px 0; }}
+.arch .story {{ margin-left: 16px; margin-right: 16px; }}
+.arch > *:last-child {{ margin-bottom: 16px; }}
+.kpi {{ border-width: 0 0 0 0 !important; background: #f5f5f5 !important; }}
+.pimg-lg {{ border: 0 !important; }}
 </style>
 """,
     unsafe_allow_html=True,
@@ -266,10 +363,10 @@ run = sp.set_index("sport").loc["달리기"] if sp is not None else None
 # ── 머리말 ─────────────────────────────────────────────
 st.markdown(
     f"""
+<div class="mbar"><b>K-WELLNESS BRAND MAP</b><span class="right">2016–2026 · 6 BRANDS</span></div>
 <div class="hero topbar">
-  <div class="eyebrow">K-WELLNESS BRAND MAP · 2016–2026</div>
   <h1>대한민국 웰니스 브랜드 6 심층 비교</h1>
-  <p><b style="color:#1b2433">누구를 잡고, 무엇으로 성장했으며, 다음은 어디로 가나?</b> 애슬레저·짐웨어 브랜드 6개를 공개 데이터로 비교하고, 한국의 운동 변화와 엮어 다음 기회를 짚었어요.</p>
+  <p><b style="color:#000">누구를 잡고, 무엇으로 성장했으며, 다음은 어디로 가나?</b> 애슬레저·짐웨어 브랜드 6개를 공개 데이터로 비교하고, 한국의 운동 변화와 엮어 다음 기회를 짚었어요.</p>
   <div class="meta-row">
     <span class="chip">검색 <b>네이버 데이터랩</b> · 2016.01–2026.10</span>
     <span class="chip">가격 <b>무신사</b> · {len(pr) if pr is not None else 0}개 상품 · 2026.11.25</span>
@@ -334,7 +431,8 @@ with T["한눈에 보기"]:
         html = "".join(
             f'<div class="find"><div class="no">{evid(ev)}</div><div class="big">{big}</div><div class="head">{h}</div><div class="body">{body}</div></div>'
             for ev, big, h, body in cards_)
-        col.markdown(f'<div class="phase"><div class="pk">{k}</div><div class="pq">{q}</div></div>{html}', unsafe_allow_html=True)
+        pc = {"지금": C_NOW, "왜": C_WHY, "다음": C_NEXT}[k]
+        col.markdown(f'<div class="phasebox" style="--pc:{pc}"><div class="phase"><span class="dot"></span><div class="pk">{k}</div><div class="pq">{q}</div></div>{html}</div>', unsafe_allow_html=True)
 
     st.write("")
     left, right = st.columns([1.1, 1], gap="large")
@@ -343,8 +441,8 @@ with T["한눈에 보기"]:
         yy = pd.Series({b: yoy(b) for b in BRANDS}).sort_values()
         fig = go.Figure(go.Bar(
             x=yy.values, y=yy.index, orientation="h",
-            marker=dict(color=[COLOR[b] for b in yy.index], line=dict(color=SURFACE, width=2)),
-            text=[f"{v:+.0f}%" for v in yy.values], textposition="outside", textfont=dict(color=TEXT),
+            marker=dict(color=["#111111" if v > 0.5 else ("#c8c8c8" if v < -0.5 else "#e5e5e5") for v in yy.values], line=dict(color=SURFACE, width=2)),
+            text=[f"{v:+.0f}%" for v in yy.values], textposition="outside", textfont=dict(color=[C_UP if v > 0.5 else (C_DOWN if v < -0.5 else MUTED) for v in yy.values], size=13),
             hovertemplate="%{y} %{x:+.1f}%<extra></extra>",
         ))
         style(fig, height=330, hover="closest")
@@ -426,8 +524,8 @@ with T["① 누구를 잡았나"]:
     with left:
         st.markdown("**포지셔닝 지도**")
         fig = go.Figure()
-        fig.add_shape(type="rect", x0=0, x1=5, y0=0, y1=2, fillcolor=rgba(COLOR["본투윈"], 0.06), line_width=0, layer="below")
-        fig.add_shape(type="rect", x0=-2, x1=0, y0=-1, y1=0, fillcolor=rgba(COLOR["안다르"], 0.07), line_width=0, layer="below")
+        fig.add_shape(type="rect", x0=0, x1=5, y0=0, y1=2, fillcolor="#f5f5f5", line_width=0, layer="below")
+        fig.add_shape(type="rect", x0=-2, x1=0, y0=-1, y1=0, fillcolor="#f5f5f5", line_width=0, layer="below")
         for b, r in pos.iterrows():
             unstable = b == "압도"
             fig.add_trace(go.Scatter(
@@ -523,7 +621,7 @@ with T["② 무엇으로 컸나"]:
             fig = go.Figure()
             for b in BRANDS:
                 fig.add_trace(go.Scatter(x=sos.index, y=sos[b], name=b, mode="lines", stackgroup="one",
-                                         line=dict(color=COLOR[b], width=0.5), fillcolor=rgba(COLOR[b], 0.85),
+                                         line=dict(color=COLOR[b], width=0.5), fillcolor=rgba(COLOR[b], 0.62),
                                          hovertemplate=f"{b} %{{y:.1f}}%<extra></extra>"))
             style(fig, height=380, ytitle="검색 점유율(%)")
             fig.update_layout(legend_traceorder="normal")
@@ -752,7 +850,7 @@ with T["③ 다음은 어디로"]:
             lab = {0: "낮음", 1: "보통", 2: "높음"}
             fig = go.Figure(go.Heatmap(
                 z=zp.values, x=tr_order, y=BRANDS, zmin=0, zmax=2, xgap=3, ygap=3, showscale=False,
-                colorscale=[[0, "#eef2f8"], [0.5, "#9dc0ea"], [1, "#1f4e8c"]],
+                colorscale=[[0, "#f5f5f5"], [0.5, "#cfcfcf"], [1, "#111111"]],
                 text=[[lab[v] for v in row] for row in zp.values], texttemplate="%{text}",
                 textfont=dict(size=12), customdata=rp.values,
                 hovertemplate="<b>%{y}</b> · %{x}<br>%{text}: %{customdata}<extra></extra>",
