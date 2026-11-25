@@ -15,7 +15,7 @@ ROOT = Path(__file__).parent
 DATA = ROOT / "data" / "processed"
 LOGOS = ROOT / "assets" / "logos" / "dark"
 
-st.set_page_config(page_title="K-웰니스 브랜드 맵", page_icon="📊", layout="wide")
+st.set_page_config(page_title="대한민국 웰니스 브랜드 6 심층 비교", page_icon="📊", layout="wide")
 
 # ── 디자인 토큰 ─────────────────────────────────────────
 # 신뢰감: 네이비(주색) + 쿨 그레이(배경·선) + 흰 카드. 강조색은 네이비 하나만 쓰고,
@@ -35,6 +35,8 @@ LINE = "#e3e7ee"
 GRID = "#eceff4"
 AXIS = "#c2c8d2"
 NEUTRAL = "#8a94a6"
+AMBER = "#b7791f"
+EVID = {"데이터": ("#e6efe8", "#1d6b35"), "보도": ("#eef2f8", "#1f4e8c"), "가설": ("#fbf1e1", "#8a5a12")}
 FONT = "Pretendard, -apple-system, 'Apple SD Gothic Neo', sans-serif"
 DIVERGING = [[0, "#eb7b7b"], [0.5, "#f1f2f4"], [1, "#6aabf1"]]
 STRENGTH = {"강함": ("#e6efe8", "#1d6b35"), "보통": ("#eef2f8", "#1f4e8c"), "약함": ("#f6efe4", "#8a5a12")}
@@ -110,6 +112,34 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .tl .t {{ font-size: .7rem; padding: 1px 7px; border-radius: 4px; background: #eef2f8; color: {PRIMARY}; margin-left: 6px; }}
 .stTabs [data-baseweb="tab-list"] {{ gap: 6px; border-bottom: 1px solid {LINE}; }}
 .stTabs [data-baseweb="tab"] {{ font-weight: 600; }}
+.arch {{ background: {SURFACE}; border: 1px solid {LINE}; border-radius: 10px; padding: 16px 18px; height: 100%; }}
+.arch h5 {{ margin: 0; color: {NAVY}; font-size: 1.02rem; }}
+.arch .sum {{ color: {MUTED}; font-size: .82rem; margin: 4px 0 6px; line-height: 1.5; }}
+.story {{ border-top: 1px solid {GRID}; padding-top: 14px; margin-top: 14px; }}
+.story .lg img {{ max-height: 26px; max-width: 120px; }}
+.story .hero {{ font-weight: 800; color: {TEXT}; font-size: 1rem; margin-top: 8px; line-height: 1.35; }}
+.story .proof {{ font-size: .74rem; color: {PRIMARY}; background: #eef2f8; display: inline-block; padding: 1px 7px; border-radius: 4px; margin-top: 4px; }}
+.story dl {{ margin: 8px 0 0; font-size: .82rem; line-height: 1.5; }}
+.story dt {{ color: {MUTED}; font-size: .72rem; font-weight: 700; letter-spacing: .04em; margin-top: 6px; }}
+.story dd {{ margin: 0; color: {TEXT}; }}
+.story .src {{ font-size: .72rem; }}
+.story .src a {{ color: {MUTED}; }}
+.ev-chip {{ display: inline-block; font-size: .68rem; font-weight: 700; padding: 1px 7px; border-radius: 4px; letter-spacing: .02em; margin-right: 6px; }}
+.thesis {{ background: {NAVY}; color: #fff; border-radius: 10px; padding: 18px 22px; margin: .4rem 0 1rem; }}
+.thesis .k {{ font-size: .72rem; letter-spacing: .12em; font-weight: 700; color: #b9c9e3; }}
+.thesis .t {{ font-size: 1.12rem; line-height: 1.6; margin-top: 4px; }}
+.thesis b {{ color: #fff; border-bottom: 2px solid #6aabf1; }}
+.phase {{ display: flex; align-items: baseline; gap: 8px; margin: 0 0 8px; }}
+.phase .pk {{ font-weight: 800; color: {NAVY}; font-size: 1.05rem; }}
+.phase .pq {{ color: {MUTED}; font-size: .84rem; }}
+.find + .find {{ margin-top: 10px; }}
+.trend {{ background: {SURFACE}; border: 1px solid {LINE}; border-radius: 10px; padding: 16px; height: 100%; }}
+.trend h5 {{ margin: 8px 0 2px; color: {NAVY}; font-size: 1rem; }}
+.trend .what {{ color: {MUTED}; font-size: .78rem; }}
+.trend .why {{ color: {TEXT}; font-size: .84rem; line-height: 1.55; margin-top: 8px; }}
+.trend dl, .story dl {{ margin: 8px 0 0; font-size: .82rem; line-height: 1.5; }}
+.trend dt {{ color: {MUTED}; font-size: .72rem; font-weight: 700; margin-top: 6px; }}
+.trend dd {{ margin: 0; color: {TEXT}; }}
 .foot {{ color: {MUTED}; font-size: .76rem; border-top: 1px solid {LINE}; margin-top: 2rem; padding-top: 12px; }}
 </style>
 """,
@@ -121,7 +151,7 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 def load():
     names = ["monthly_index", "segment_share", "positioning", "kdh_weekly", "events", "revenue",
              "sports", "sports_participation", "products", "seasonality", "event_effects",
-             "baseline", "sos", "validation"]
+             "baseline", "sos", "validation", "brand_story", "outlook"]
     return {n: pd.read_csv(DATA / f"{n}.csv") for n in names if (DATA / f"{n}.csv").exists()}
 
 
@@ -167,6 +197,11 @@ def logo_html(brand):
 def kpi(col, label, value, sub=""):
     col.markdown(f'<div class="kpi"><div class="label">{label}</div><div class="value">{value}</div>'
                  f'<div class="sub">{sub}</div></div>', unsafe_allow_html=True)
+
+
+def evid(kind):
+    bg, fg = EVID[kind]
+    return f'<span class="ev-chip" style="background:{bg};color:{fg}">{kind}</span>'
 
 
 def strength(level):
@@ -217,8 +252,8 @@ st.markdown(
     f"""
 <div class="hero topbar">
   <div class="eyebrow">K-WELLNESS BRAND MAP · 2016–2026</div>
-  <h1>웰니스 브랜드들은 누구를 잡고, 무엇으로 성장했나?</h1>
-  <p>한국 애슬레저·짐웨어 브랜드 6개의 고객층, 가격, 성장 계기를 공개 데이터로 비교한 경쟁 분석 대시보드예요.</p>
+  <h1>대한민국 웰니스 브랜드 6 심층 비교</h1>
+  <p><b style="color:#1b2433">누구를 잡고, 무엇으로 성장했으며, 다음은 어디로 가나?</b> 애슬레저·짐웨어 브랜드 6개를 공개 데이터로 비교하고, 한국의 운동 변화와 엮어 다음 기회를 짚었어요.</p>
   <div class="meta-row">
     <span class="chip">검색 <b>네이버 데이터랩</b> · 2016.01–2026.10</span>
     <span class="chip">가격 <b>무신사</b> · {len(pr) if pr is not None else 0}개 상품 · 2026.11.25</span>
@@ -243,37 +278,49 @@ cards = "".join(
 )
 st.markdown(f'<div class="cards">{cards}</div>', unsafe_allow_html=True)
 
-TABS = ["한눈에 보기", "① 누구를 잡았나", "② 무엇으로 컸나", "③ 시장의 흐름", "④ 브랜드 프로필", "데이터·방법"]
+TABS = ["한눈에 보기", "브랜드 스토리", "① 누구를 잡았나", "② 무엇으로 컸나", "③ 다음은 어디로", "브랜드 프로필", "데이터·방법"]
 T = dict(zip(TABS, st.tabs(TABS)))
 
 # ── 한눈에 보기 ────────────────────────────────────────
 with T["한눈에 보기"]:
-    st.markdown('<div class="section-label">이 대시보드로 답하는 실무 질문</div>', unsafe_allow_html=True)
     st.markdown(
-        """<div class="uses">
-<div class="use"><div class="who">브랜드 기획·MD</div><div class="q">경쟁사는 어떤 고객을 잡고 있고, 얼마에, 얼마나 할인해서 파나? 우리가 들어갈 빈자리는 어디인가?</div></div>
-<div class="use"><div class="who">마케팅</div><div class="q">경쟁사 대비 검색 점유율(Share of Search)은 어떻게 움직이나? 모델·콜라보·매장 중 무엇이 관심을 바꿨나? 언제 출시해야 하나?</div></div>
-<div class="use"><div class="who">창업·투자 검토</div><div class="q">어느 운동·고객층이 커지고 있나? 앞선 브랜드는 어디서 성장하고 어디서 무너졌나?</div></div>
-</div>""",
-        unsafe_allow_html=True,
-    )
+        f'<div class="thesis"><div class="k">한 줄 결론</div>'
+        f'<div class="t">시장의 몸집은 여전히 <b>여성·레깅스 중심 애슬레저</b>가 크지만, 성장의 무게중심은 '
+        f'<b>헬스·러닝을 하는 남성 20대</b>로 옮겨 가고 있어요. 그런데 이 수요를 먼저 잡은 짐웨어 3사의 검색 점유율은 2024년을 정점으로 주춤해요. '
+        f'운동 문화를 가진 다음 브랜드가 들어올 자리가 열려 있다는 뜻이에요.</div></div>',
+        unsafe_allow_html=True)
 
-    st.markdown('<div class="section-label">핵심 발견</div>', unsafe_allow_html=True)
-    finds = [
-        ("FINDING 01", f"{male_gym:.0f}%", "짐웨어 브랜드는 남성 검색에서 자리를 잡았다",
-         f"여성 검색은 안다르·젝시믹스가 {female_top:.0f}%를 쥔 2강 구도예요. 남성 검색에서는 본투윈·HDEX·압도가 {male_gym:.0f}%, 20대에서는 {young_gym:.0f}%를 가져왔어요."),
-        ("FINDING 02", f"{psum.loc['본투윈', 'disc']:.0f}% vs {psum.loc['HDEX', 'disc']:.0f}%", "할인율이 포지션을 가른다",
-         f"같은 남성 20대를 노려도 본투윈은 할인 중앙값 {psum.loc['본투윈', 'disc']:.0f}%(판매가 {psum.loc['본투윈', 'sale'] / 10000:.1f}만 원), "
-         f"HDEX는 {psum.loc['HDEX', 'disc']:.0f}%({psum.loc['HDEX', 'sale'] / 10000:.1f}만 원)예요. 무신사 상품 {len(pr)}개 기준이에요."),
-        ("FINDING 03", "5–8월", "관심은 여름에 몰린다",
-         "2022–2026년 매해 평균과 비교하면 6개 브랜드 모두 5–8월에 높고 12–2월에 낮아요. 신상품·캠페인은 4–5월에 맞추는 게 유리해요."),
-        ("FINDING 04", f"{n_out} / {n_eff}건", "단발 이벤트는 검색 흐름을 잘 바꾸지 못했다",
-         f"이벤트 {n_eff}건 중 평소 변동 범위를 벗어난 건 {n_out}건, 위로 벗어난 건 {n_out_up}건뿐이에요. 김동현 모델 발탁, HDEX 더현대 매장도 평소 범위 안이었어요."),
+    sos_now = d["sos"].set_index("month") if d.get("sos") is not None else None
+    gsum = sos_now[["본투윈", "HDEX", "압도"]].sum(axis=1) if sos_now is not None else pd.Series(dtype=float)
+    gym_sos_22 = gsum.loc["2022-01":"2022-12"].mean()
+    gym_sos_24 = gsum.loc["2024-01":"2024-12"].mean()
+    gym_sos_26 = gsum.loc["2025-11":"2026-10"].mean()
+    cols3 = [
+        ("지금", "누가 시장을 쥐고 있나", [
+            ("데이터", f"{female_top:.0f}%", "여성 시장은 2강이 굳혔다", f"여성 검색의 {female_top:.0f}%가 안다르·젝시믹스예요."),
+            ("데이터", f"{male_gym:.0f}%", "남성 시장은 아직 열려 있다", f"남성 검색에서 짐웨어 3사가 {male_gym:.0f}%, 20대에선 {young_gym:.0f}%를 가져왔어요."),
+        ]),
+        ("왜", "무엇이 성장을 만들었나", [
+            ("데이터", f"{psum.loc['본투윈', 'disc']:.0f}% vs {psum.loc['HDEX', 'disc']:.0f}%", "할인율이 포지션을 가른다",
+             f"같은 남성 20대를 노려도 본투윈은 정가, HDEX는 할인으로 팔아요(무신사 {len(pr)}개 상품)."),
+            ("데이터", f"{n_out_up} / {n_eff}건", "한 방 이벤트는 잘 안 통했다",
+             f"이벤트 {n_eff}건 중 검색을 평소 범위 위로 올린 건 부정 이슈 {n_out_up}건뿐. 대신 모든 브랜드가 5–8월에 정점이에요."),
+        ]),
+        ("다음", "어디로 가나", [
+            ("데이터", f"+{gym.rate_2025 - gym.rate_2024:.1f}%p", "헬스·달리기가 가장 빨리 큰다",
+             f"규칙적으로 운동하는 사람 중 헬스 {gym.rate_2024}→{gym.rate_2025}%, 달리기 {run.rate_2024}→{run.rate_2025}%. 10개 종목 중 가장 큰 증가예요."),
+            ("데이터", f"{gym_sos_24:.0f}% → {gym_sos_26:.0f}%", "그런데 기존 짐웨어는 주춤",
+             f"짐웨어 3사의 검색 점유율은 2022년 {gym_sos_22:.0f}%에서 2024년 {gym_sos_24:.0f}%까지 컸다가 최근 {gym_sos_26:.0f}%로 내려왔어요. 늘어난 운동 인구를 잡을 자리가 비어 있어요."),
+        ]),
     ]
-    st.markdown('<div class="finds">' + "".join(
-        f'<div class="find"><div class="no">{n}</div><div class="big">{big}</div><div class="head">{h}</div><div class="body">{body}</div></div>'
-        for n, big, h, body in finds) + "</div>", unsafe_allow_html=True)
+    cc = st.columns(3, gap="medium")
+    for col, (k, q, cards_) in zip(cc, cols3):
+        html = "".join(
+            f'<div class="find"><div class="no">{evid(ev)}</div><div class="big">{big}</div><div class="head">{h}</div><div class="body">{body}</div></div>'
+            for ev, big, h, body in cards_)
+        col.markdown(f'<div class="phase"><div class="pk">{k}</div><div class="pq">{q}</div></div>{html}', unsafe_allow_html=True)
 
+    st.write("")
     left, right = st.columns([1.1, 1], gap="large")
     with left:
         st.markdown("**최근 1년 검색 관심 변화 (전년 대비)**")
@@ -288,17 +335,18 @@ with T["한눈에 보기"]:
         fig.add_vline(x=0, line=dict(color=AXIS, width=1))
         fig.update_xaxes(showgrid=True, gridcolor=GRID, ticksuffix="%", range=[min(yy.min() * 1.35, -10), max(yy.max() * 1.35, 10)])
         chart(fig)
-        st.caption("2025.11–2026.10 평균 검색 지수 ÷ 2024.11–2025.10 평균 − 1. 압도는 검색량이 매우 작아 변화율이 크게 흔들려요.")
+        st.caption("2025.11–2026.10 평균 검색 지수 ÷ 2024.11–2025.10 평균 − 1. 압도는 검색량이 매우 작아 변화율이 크게 흔들려요. "
+                   "6개 중 5개가 줄거나 제자리라, 브랜드 화제성만으로 크던 시기는 지났다고 볼 수 있어요.")
     with right:
         items = [
             ("강함", "남성 20대 · 헬스/러닝을 겨냥한다",
-             f"남성 검색 {male_gym:.0f}%, 20대 {young_gym:.0f}%를 짐웨어 브랜드가 가져왔고, 헬스 {gym.rate_2024}→{gym.rate_2025}%, 달리기 {run.rate_2024}→{run.rate_2025}%로 참여가 가장 빨리 늘어요."),
+             f"남성 검색 {male_gym:.0f}%, 20대 {young_gym:.0f}%를 짐웨어 브랜드가 가져왔고, 헬스·달리기 참여가 가장 빨리 늘어요."),
             ("강함", "출시와 캠페인은 4–5월에",
              "6개 브랜드 모두 5–8월 정점, 12–2월 바닥. 5년치 월별 패턴이 같아요."),
             ("보통", "가격보다 할인 정책으로 포지션을 지킨다",
              f"프리미엄(본투윈)은 할인 {psum.loc['본투윈', 'disc']:.0f}%, 가성비(HDEX·젝시믹스)는 30%대. 하루치 무신사 상품 {len(pr)}개 기준이에요."),
-            ("보통", "모델 한 명보다 꾸준한 접점",
-             f"이벤트 {n_eff}건 중 검색을 평소 범위 위로 끌어올린 건 {n_out_up}건. 단발 이벤트에 예산을 몰기보다 시즌마다 반복하는 편이 안전해요."),
+            ("보통", "단발 이벤트보다 반복되는 운동 달력",
+             f"단발 이벤트 {n_eff}건 중 검색을 끌어올린 건 {n_out_up}건. 크루·대회처럼 매 시즌 돌아오는 접점을 브랜드 달력으로 삼는 편이 안전해요."),
             ("약함", "성장보다 수익 구조",
              "뮬라웨어는 판관비가 매출의 약 60%까지 올라간 뒤 2025년 회생을 신청했어요. 사례 1건이라 일반화는 조심해야 해요."),
         ]
@@ -307,6 +355,49 @@ with T["한눈에 보기"]:
         st.markdown(f'<div class="verdict"><h4>실무 시사점</h4>'
                     f'<div class="lead">새 웰니스 브랜드를 만든다면. 근거 강도 = 데이터 양과 기간, 다른 해석의 여지를 함께 본 판단이에요.</div>{html}</div>',
                     unsafe_allow_html=True)
+
+    st.markdown('<div class="section-label">누가, 어디를 보면 되나</div>', unsafe_allow_html=True)
+    st.markdown(
+        """<div class="uses">
+<div class="use"><div class="who">브랜드 기획·MD</div><div class="q">경쟁사의 고객층과 가격·할인 → <b>① 누구를 잡았나</b>, 브랜드별 대표상품과 성장 공식 → <b>브랜드 스토리</b></div></div>
+<div class="use"><div class="who">마케팅</div><div class="q">검색 점유율, 이벤트 전후 변화, 출시 시즌 → <b>② 무엇으로 컸나</b></div></div>
+<div class="use"><div class="who">창업·투자 검토</div><div class="q">운동 참여 변화와 다음 흐름, 브랜드별 준비도 → <b>③ 다음은 어디로</b></div></div>
+</div>""",
+        unsafe_allow_html=True,
+    )
+
+# ── 브랜드 스토리 ──────────────────────────────────────
+story = d.get("brand_story")
+ARCH = [
+    ("원단 기술·확장형", "레깅스 하나로 시작해 자체 원단으로 차별화하고, 카테고리와 해외로 넓혀 간 1세대 애슬레저.", ["젝시믹스", "안다르", "뮬라웨어"]),
+    ("볼륨·가성비형", "운동하는 사람이 매일 입는 기본템을 묶음·할인으로 많이 파는 방식.", ["HDEX"]),
+    ("문화·커뮤니티형", "옷보다 '운동하는 사람의 태도'를 판다. 커뮤니티와 격투기·짐 콜라보 드롭으로 팬을 만든다.", ["본투윈", "압도"]),
+]
+
+
+def story_html(b):
+    r = story.set_index("brand").loc[b]
+    return (f'<div class="story"><div class="lg">{logo_html(b)}</div>'
+            f'<div class="hero">{r.hero_product}</div>{evid("데이터" if "무신사" in r.hero_evidence else "보도")}<span class="proof">{r.hero_evidence}</span>'
+            f'<dl><dt>정체성 · 가치</dt><dd>{r.identity}</dd><dt>성장 방식</dt><dd>{r.growth}</dd>'
+            f'<dt>데이터로 본 결과</dt><dd>{r.data_link}</dd>'
+            f'<dt>기회 · 위험</dt><dd>＋ {r.opportunity}<br>－ {r.risk}</dd></dl>'
+            f'<div class="src"><a href="{r.source}" target="_blank">출처</a></div></div>')
+
+
+with T["브랜드 스토리"]:
+    st.markdown("### 대표상품으로 읽는 세 가지 성장 공식")
+    st.markdown('<div class="insight">대표상품을 보면 브랜드가 무엇을 파는지 보여요. 젝시믹스·안다르·뮬라웨어는 <b>원단 기술</b>을, '
+                "HDEX는 <b>매일 입는 기본템의 가격</b>을, 본투윈·압도는 <b>운동하는 사람의 태도와 문화</b>를 팔아요. "
+                "같은 레깅스 출신이라도 안다르·젝시믹스는 확장에 성공했고, 직접 운영 비용이 컸던 뮬라웨어는 회생 신청까지 갔어요.</div>",
+                unsafe_allow_html=True)
+    if story is not None:
+        cols = st.columns(3, gap="medium")
+        for col, (name, desc, members) in zip(cols, ARCH):
+            col.markdown(f'<div class="arch"><h5>{name}</h5><div class="sum">{desc}</div>'
+                         + "".join(story_html(b) for b in members) + "</div>", unsafe_allow_html=True)
+        st.caption("대표상품: 회사·언론이 발표한 누적 판매 기록이 있으면 그것을, 없으면 2026.11.25 무신사 리뷰 수 최다 상품을 기준으로 골랐어요. "
+                   "판매 수치는 회사 발표라 기준 시점이 서로 달라요. 정체성은 공식 슬로건·인터뷰 기사를 요약했어요.")
 
 # ── ① 누구를 잡았나 ──────────────────────────────────
 with T["① 누구를 잡았나"]:
@@ -572,13 +663,13 @@ with T["② 무엇으로 컸나"]:
         st.caption("발탁 직후 한 주는 반짝 올랐지만 석 달 평균은 오히려 낮았고, 이 정도 하락은 본투윈의 평소 변동 범위 안이에요. "
                    "같은 시기 매장 오픈·겨울 비수기가 겹쳐 '효과 없음'으로 단정할 수는 없어요.")
 
-# ── ③ 시장의 흐름 ──────────────────────────────────
-with T["③ 시장의 흐름"]:
+# ── ③ 다음은 어디로 ──────────────────────────────────
+with T["③ 다음은 어디로"]:
+    st.markdown("### 한국의 운동은 어떻게 바뀌고 있나")
     if sp is not None:
         spd = sp.sort_values("rate_2025")
-        st.markdown("### 남성 짐웨어 시장은 왜 커졌나")
-        st.markdown(f'<div class="insight">2024→2025년 <b>보디빌딩(헬스)</b> {gym.rate_2024}%→{gym.rate_2025}%, <b>달리기</b> {run.rate_2024}%→{run.rate_2025}%. '
-                    "본투윈·HDEX·압도가 노리는 헬스·러닝이 가장 빠르게 크는 운동이에요.</div>", unsafe_allow_html=True)
+        st.markdown(f'<div class="insight">{evid("데이터")} 2024→2025년 <b>보디빌딩(헬스)</b> {gym.rate_2024}%→{gym.rate_2025}%, <b>달리기</b> {run.rate_2024}%→{run.rate_2025}%. '
+                    "규칙적으로 운동하는 사람이 고르는 운동 중 가장 빠르게 컸어요. 남성 짐웨어 브랜드가 노리는 바로 그 운동이에요.</div>", unsafe_allow_html=True)
         left, right = st.columns([1.3, 1], gap="large")
         with left:
             st.markdown("**규칙적으로 운동하는 사람이 하는 운동 (1~3순위 합, %)**")
@@ -594,38 +685,77 @@ with T["③ 시장의 흐름"]:
                                      marker=dict(size=12, color=PRIMARY, line=dict(color=SURFACE, width=2)),
                                      text=[f"{v:.1f}" for v in spd.rate_2025], textposition="middle right",
                                      textfont=dict(color=TEXT, size=11), hovertemplate="%{y} 2025년 %{x:.1f}%<extra></extra>"))
-            style(fig, height=440, xtitle="참여율(%)", hover="closest")
+            style(fig, height=420, xtitle="참여율(%)", hover="closest")
             fig.update_xaxes(showgrid=True, gridcolor=GRID, range=[0, 46])
             chart(fig)
         with right:
-            pp = d.get("sports_participation")
-            if pp is not None:
-                st.markdown("**주 1회 이상 생활체육 참여율 (%)**")
-                fig = go.Figure(go.Scatter(x=pp.year, y=pp.rate, mode="lines+markers+text", line=dict(color=PRIMARY, width=2),
-                                           marker=dict(size=9, line=dict(color=SURFACE, width=2)), text=[f"{v:.1f}" for v in pp.rate],
-                                           textposition="top center", textfont=dict(color=TEXT, size=11),
-                                           hovertemplate="%{x}년 %{y:.1f}%<extra></extra>"))
-                fig.add_annotation(x=2020, y=60.1, text="코로나19", showarrow=True, arrowcolor=AXIS, ax=0, ay=30, font=dict(color=MUTED, size=11))
-                style(fig, height=440, hover="closest")
-                fig.update_xaxes(dtick=1)
-                fig.update_yaxes(range=[55, 70])
-                chart(fig)
-        st.caption("출처: 문화체육관광부 국민생활체육조사(2024·2025). 걷기·달리기는 2023년과 분류가 달라 이전 해와 직접 비교하지 않았어요. 복싱·격투기는 따로 집계되지 않아요.")
+            st.markdown("**애슬레저 관심의 10년 (검색 지수 합, 3개월 평균)**")
+            tot = mon[mon.brand.isin(["젝시믹스", "안다르", "뮬라웨어"])].groupby("month")["index"].sum().rolling(3, min_periods=1).mean()
+            gym_b = mon[mon.brand.isin(["본투윈", "HDEX", "압도"])].groupby("month")["index"].sum().rolling(3, min_periods=1).mean()
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=tot.index, y=tot.values, name="여성 중심 애슬레저 3사", mode="lines", line=dict(color=COLOR["안다르"], width=2),
+                                     hovertemplate="여성 중심 애슬레저 3사 %{y:.1f}<extra></extra>"))
+            fig.add_trace(go.Scatter(x=gym_b.index, y=gym_b.values, name="남성 중심 짐웨어 3사", mode="lines", line=dict(color=COLOR["본투윈"], width=2),
+                                     hovertemplate="남성 중심 짐웨어 3사 %{y:.1f}<extra></extra>"))
+            style(fig, height=420)
+            chart(fig)
+        st.caption("출처: 문화체육관광부 국민생활체육조사(2024·2025), 네이버 데이터랩. 걷기·달리기는 2023년과 분류가 달라 이전 해와 직접 비교하지 않았어요. "
+                   "복싱·격투기는 따로 집계되지 않아요. 여성 중심 애슬레저는 2019년 레깅스 열풍 이후 정체, 남성 중심 짐웨어는 2022년부터 자리를 넓히고 있어요.")
 
-    st.markdown("### 애슬레저 관심의 10년")
-    tot = mon[mon.brand.isin(["젝시믹스", "안다르", "뮬라웨어"])].groupby("month")["index"].sum().rolling(3, min_periods=1).mean()
-    gym_b = mon[mon.brand.isin(["본투윈", "HDEX", "압도"])].groupby("month")["index"].sum().rolling(3, min_periods=1).mean()
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=tot.index, y=tot.values, name="여성 중심 애슬레저 3사", mode="lines", line=dict(color=COLOR["안다르"], width=2),
-                             hovertemplate="여성 중심 애슬레저 3사 %{y:.1f}<extra></extra>"))
-    fig.add_trace(go.Scatter(x=gym_b.index, y=gym_b.values, name="남성 중심 짐웨어 3사", mode="lines", line=dict(color=COLOR["본투윈"], width=2),
-                             hovertemplate="남성 중심 짐웨어 3사 %{y:.1f}<extra></extra>"))
-    style(fig, height=360, ytitle="검색 지수 합 (3개월 이동평균)")
-    chart(fig)
-    st.caption("여성 중심 애슬레저는 2019년 레깅스 열풍 이후 정체, 남성 중심 짐웨어는 2022년부터 등장해 꾸준히 자리를 넓히고 있어요. 같은 척도의 검색 지수 합이에요.")
+    st.markdown("### 다음 네 가지 흐름")
+    st.markdown(f'<div class="insight">{evid("가설")} 아래는 위 데이터와 시장 흐름을 엮은 해석이에요. 검증된 사실이 아니라, '
+                "브랜드가 다음 투자처를 고를 때 점검할 질문으로 읽어 주세요.</div>", unsafe_allow_html=True)
+    trends = [
+        ("운동이 정체성이 된다", "헬스·달리기 참여가 가장 빨리 늘어남",
+         "오운완 인증, 러닝 크루, 격투기 예능처럼 운동이 '내가 누구인지'를 보여 주는 수단이 됐어요. 옷은 기능품에서 소속의 표시로 바뀌어요.",
+         "본투윈 · 압도", "가성비 기본템 중심 브랜드"),
+        ("하이브리드 트레이닝", "달리기와 근력을 섞은 대회형 운동(하이록스 등)",
+         "헬스장 고객과 러너가 한 경기에서 만나요. 함께 훈련하고 매년 대회에 나가는 구조라, 단발 이벤트가 아닌 반복 접점이 생겨요.",
+         "본투윈 · 압도(커뮤니티), 젝시믹스 · 안다르(여성·혼성 기능복)", "HDEX(경기용 기능 라인 필요)"),
+        ("트레일·아웃도어 러닝", "산과 들을 달리는 장거리 러닝",
+         "핵심은 신발·조끼·방수 재킷 같은 장비라 아웃도어·신발 브랜드가 강해요. 의류 브랜드는 장비 브랜드와의 콜라보로 문화만 가져오는 게 현실적이에요.",
+         "콜라보에 강한 본투윈, 러닝 라인을 가진 젝시믹스", "레깅스 중심 브랜드"),
+        ("3040 웰니스 케어", "저속노화·근감소 예방 같은 '오래 건강하게'",
+         "20대 헬스 고객이 나이 들며 러닝·회복·건강관리로 옮겨 가요. 의류가 보충제·운동 기록 같은 웰니스 서비스와 묶일 여지가 커요.",
+         "젝시믹스 · 안다르(3040 여성 기반)", "20대 남성에만 집중한 브랜드"),
+    ]
+    tc = st.columns(4, gap="small")
+    for col, (name, what, why, win, press) in zip(tc, trends):
+        col.markdown(f'<div class="trend">{evid("가설")}<h5>{name}</h5><div class="what">{what}</div><div class="why">{why}</div>'
+                     f'<dl><dt>유리한 쪽</dt><dd>{win}</dd><dt>압박받는 쪽</dt><dd>{press}</dd></dl></div>', unsafe_allow_html=True)
 
-# ── ④ 브랜드 프로필 ──────────────────────────────────
-with T["④ 브랜드 프로필"]:
+    ol = d.get("outlook")
+    if ol is not None:
+        st.markdown("### 브랜드별 준비도")
+        left, right = st.columns([1.5, 1], gap="large")
+        with left:
+            tr_order = ["정체성·커뮤니티", "하이브리드 트레이닝", "트레일·아웃도어 러닝", "3040 웰니스 케어"]
+            zp = ol.pivot(index="brand", columns="trend", values="score").loc[BRANDS, tr_order]
+            rp = ol.pivot(index="brand", columns="trend", values="reason").loc[BRANDS, tr_order]
+            lab = {0: "낮음", 1: "보통", 2: "높음"}
+            fig = go.Figure(go.Heatmap(
+                z=zp.values, x=tr_order, y=BRANDS, zmin=0, zmax=2, xgap=3, ygap=3, showscale=False,
+                colorscale=[[0, "#eef2f8"], [0.5, "#9dc0ea"], [1, "#1f4e8c"]],
+                text=[[lab[v] for v in row] for row in zp.values], texttemplate="%{text}",
+                textfont=dict(size=12), customdata=rp.values,
+                hovertemplate="<b>%{y}</b> · %{x}<br>%{text}: %{customdata}<extra></extra>",
+            ))
+            style(fig, height=360, hover="closest")
+            fig.update_yaxes(autorange="reversed", showgrid=False)
+            fig.update_xaxes(side="top")
+            chart(fig)
+            st.caption("판단 기준: 현재 고객층, 보유 상품 라인, 커뮤니티·콜라보 경험(브랜드 스토리 탭의 출처 기준). 칸에 마우스를 올리면 이유가 보여요.")
+        with right:
+            st.markdown("**놓치면 안 되는 위험**")
+            st.markdown(
+                f"""<div class="verdict" style="border-top-color:{AMBER}">
+<div class="vi"><b>유행의 수명</b><div class="ev">크로스핏 붐이 꺾였듯 특정 대회형 운동은 짧게 끝날 수 있어요. 한 종목보다 '달리기 + 근력'이라는 넓은 문화에 거는 편이 안전해요.</div></div>
+<div class="vi"><b>오프라인 고정비</b><div class="ev">운동 공간형 매장은 커뮤니티 거점이 되지만, 직접 운영 비용이 뮬라웨어를 무너뜨린 원인이기도 했어요.</div></div>
+<div class="vi"><b>따라 하기 쉬운 강점</b><div class="ev">가성비와 유명인 모델은 쉽게 복제돼요. 김동현 발탁도 검색을 평소 범위 밖으로 움직이지 못했어요.</div></div>
+</div>""", unsafe_allow_html=True)
+
+# ── 브랜드 프로필 ──────────────────────────────────
+with T["브랜드 프로필"]:
     b = st.radio("브랜드 선택", BRANDS, horizontal=True, label_visibility="collapsed")
     c = COLOR[b]
     head_l, head_r = st.columns([1, 3])
@@ -645,13 +775,17 @@ with T["④ 브랜드 프로필"]:
     else:
         kpi(k4, "매출", "비공개", "비상장")
 
+    if story is not None:
+        r = story.set_index("brand").loc[b]
+        st.markdown(f'<div class="insight"><b>{r.archetype}</b> · 대표상품 <b>{r.hero_product}</b> ({r.hero_evidence})<br>'
+                    f'{r.identity}. 성장 방식: {r.growth}.<br><b>기회</b> {r.opportunity} · <b>위험</b> {r.risk}</div>', unsafe_allow_html=True)
     st.write("")
     left, right = st.columns([1.6, 1], gap="large")
     with left:
         s = mon[mon.brand == b].copy()
         s["index"] = s["index"] / s["index"].max() * 100
         s["sm"] = s["index"].rolling(3, min_periods=1).mean()
-        first = s[s["index"] > 0].month.min()
+        first = s[s["index"] > 1].month.min()
         s = s[s.month >= first]
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=s.month, y=s["index"], mode="lines", line=dict(color=c, width=1), opacity=0.35,
@@ -692,6 +826,10 @@ with T["데이터·방법"]:
 | 이벤트 | 언론 기사, 기업정보 | {len(d['events'])}건 (월까지 확인된 {n_eff}건으로 효과 계산) | 무엇으로 컸나 |
 | 운동 참여 | 문체부 국민생활체육조사 | 2019–2025 | 시장 배경 |
 
+**근거 표기**
+- 화면의 꼬리표는 근거의 종류예요. **데이터**는 우리가 모은 수치로 계산한 것, **보도**는 회사 발표·기사 인용, **가설**은 데이터와 시장 흐름을 엮은 해석이에요.
+- '브랜드별 준비도'는 보유 상품 라인·고객층·콜라보 경험을 바탕으로 한 판단(낮음·보통·높음)이에요.
+
 **검증과 한계**
 - **검색 지수는 상대값이에요.** 실제 검색 횟수가 아니라 조회 안에서 최고값을 100으로 놓은 값이에요. 5개씩 나눠 조회했고, 압도는 HDEX를 공통 기준으로 같은 척도에 옮겼어요.
 - **검색이 매출을 대변하는지 확인했어요.** 매출이 공개된 3개 브랜드의 연평균 검색 지수와 연매출의 상관은 {r_all:.2f}예요. 다만 큰 브랜드는 검색이 줄어도 매출이 유지돼요.
@@ -714,5 +852,5 @@ with T["데이터·방법"]:
         with st.expander("무신사 상품 원자료"):
             st.dataframe(pr, width="stretch", hide_index=True)
 
-st.markdown('<div class="foot">K-웰니스 브랜드 맵 · 산업데이터 시각화 개인 프로젝트 · 공개 데이터 기반, 2026.11 작성</div>',
+st.markdown('<div class="foot">대한민국 웰니스 브랜드 6 심층 비교 · 산업데이터 시각화 개인 프로젝트 · 공개 데이터 기반, 2026.11 작성</div>',
             unsafe_allow_html=True)
