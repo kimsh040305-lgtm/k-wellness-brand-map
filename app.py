@@ -14,6 +14,7 @@ import streamlit as st
 ROOT = Path(__file__).parent
 DATA = ROOT / "data" / "processed"
 LOGOS = ROOT / "assets" / "logos" / "dark"
+PRODUCTS = ROOT / "assets" / "products"
 
 st.set_page_config(page_title="대한민국 웰니스 브랜드 6 심층 비교", page_icon="📊", layout="wide")
 
@@ -140,6 +141,10 @@ h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .trend dl, .story dl {{ margin: 8px 0 0; font-size: .82rem; line-height: 1.5; }}
 .trend dt {{ color: {MUTED}; font-size: .72rem; font-weight: 700; margin-top: 6px; }}
 .trend dd {{ margin: 0; color: {TEXT}; }}
+.pimg {{ background: #f1f3f6; border-radius: 8px; margin-top: 10px; aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; overflow: hidden; }}
+.pimg img {{ height: 100%; width: 100%; object-fit: contain; }}
+.pimg-lg {{ background: #f1f3f6; border-radius: 10px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid {LINE}; }}
+.pimg-lg img {{ width: 100%; height: 100%; object-fit: contain; }}
 .foot {{ color: {MUTED}; font-size: .76rem; border-top: 1px solid {LINE}; margin-top: 2rem; padding-top: 12px; }}
 </style>
 """,
@@ -192,6 +197,17 @@ def logo_html(brand):
     if b64:
         return f'<img src="data:image/png;base64,{b64}" alt="{brand} 로고">'
     return f'<div class="badge">{brand[0]}</div>'
+
+
+@st.cache_data
+def product_b64(slug):
+    f = PRODUCTS / f"{slug}.jpg"
+    return base64.b64encode(f.read_bytes()).decode() if f.exists() else None
+
+
+def product_html(brand, cls="pimg"):
+    b64 = product_b64(SLUG[brand])
+    return f'<div class="{cls}"><img src="data:image/jpeg;base64,{b64}" alt="{brand} 대표 라인 이미지"></div>' if b64 else ""
 
 
 def kpi(col, label, value, sub=""):
@@ -377,7 +393,7 @@ ARCH = [
 
 def story_html(b):
     r = story.set_index("brand").loc[b]
-    return (f'<div class="story"><div class="lg">{logo_html(b)}</div>'
+    return (f'<div class="story"><div class="lg">{logo_html(b)}</div>{product_html(b)}'
             f'<div class="hero">{r.hero_product}</div>{evid("데이터" if "무신사" in r.hero_evidence else "보도")}<span class="proof">{r.hero_evidence}</span>'
             f'<dl><dt>정체성 · 가치</dt><dd>{r.identity}</dd><dt>성장 방식</dt><dd>{r.growth}</dd>'
             f'<dt>데이터로 본 결과</dt><dd>{r.data_link}</dd>'
@@ -397,7 +413,8 @@ with T["브랜드 스토리"]:
             col.markdown(f'<div class="arch"><h5>{name}</h5><div class="sum">{desc}</div>'
                          + "".join(story_html(b) for b in members) + "</div>", unsafe_allow_html=True)
         st.caption("대표상품: 회사·언론이 발표한 누적 판매 기록이 있으면 그것을, 없으면 2026.11.25 무신사 리뷰 수 최다 상품을 기준으로 골랐어요. "
-                   "판매 수치는 회사 발표라 기준 시점이 서로 달라요. 정체성은 공식 슬로건·인터뷰 기사를 요약했어요.")
+                   "판매 수치는 회사 발표라 기준 시점이 서로 달라요. 정체성은 공식 슬로건·인터뷰 기사를 요약했어요. "
+                   "상품 사진은 각 브랜드 공식 판매 페이지의 대표 라인 이미지이며, 학습·포트폴리오 목적의 식별 용도로만 사용했어요.")
 
 # ── ① 누구를 잡았나 ──────────────────────────────────
 with T["① 누구를 잡았나"]:
@@ -758,8 +775,9 @@ with T["③ 다음은 어디로"]:
 with T["브랜드 프로필"]:
     b = st.radio("브랜드 선택", BRANDS, horizontal=True, label_visibility="collapsed")
     c = COLOR[b]
-    head_l, head_r = st.columns([1, 3])
+    head_l, head_r, head_img = st.columns([1, 2.4, 0.6])
     head_l.markdown(f'<div class="profile-logo">{logo_html(b)}</div>', unsafe_allow_html=True)
+    head_img.markdown(product_html(b, "pimg-lg"), unsafe_allow_html=True)
     head_r.markdown(f"### {b}\n<span style='color:{MUTED}'>설립 {BRAND_INFO[b][0]} · {BRAND_INFO[b][1]}</span>",
                     unsafe_allow_html=True)
     k1, k2, k3, k4 = st.columns(4)
@@ -836,7 +854,7 @@ with T["데이터·방법"]:
 - **이벤트 효과는 평소 변동과 비교했어요.** 계절성을 걷어낸 뒤 전후 3개월 변화를 구하고, 같은 계산을 모든 달에 해서 얻은 10–90 백분위(평소 범위)를 벗어났는지 봤어요. 인과가 아니라 동반된 변화예요.
 - 검색어: 본투윈(본투윈, borntowin) · 젝시믹스(젝시믹스, xexymix) · 안다르(안다르, andar) · 뮬라웨어(뮬라웨어, 뮬라 레깅스) · HDEX(HDEX, 에이치덱스) · 압도(압도 짐웨어·반팔·후드·브랜드). '안다르', '압도'처럼 일반 단어와 겹치는 이름은 다른 뜻의 검색이 섞였을 수 있어요.
 - 고객층은 네이버 검색 이용자 기준이라 무신사·인스타그램 안의 관심은 잡히지 않아요. 가격은 하루치 표본이에요.
-- 로고는 각 브랜드의 상표이며, 학습·포트폴리오 목적의 식별 용도로만 사용했어요.
+- 로고와 상품 사진은 각 브랜드의 상표·저작물이며, 학습·포트폴리오 목적의 식별 용도로만 사용했어요.
 """
     )
     with st.expander("매출 원자료"):
