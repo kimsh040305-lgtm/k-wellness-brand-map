@@ -65,6 +65,10 @@ st.markdown(
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 html, body, [class*="css"], .stMarkdown, button, input, textarea {{ font-family: {FONT} !important; }}
+.stApp, .stApp p, .stApp div, .stApp span, .stApp li, .stApp dd, .stApp td, .stApp th, .stApp label {{ word-break: keep-all; overflow-wrap: break-word; }}
+.stApp p, .stApp li, .stApp dd, .t, .body, .desc, .ev, .q, .sum, .why, .lead, .insight, .head, [data-testid="stCaptionContainer"] {{ text-wrap: pretty; }}
+.stApp h1, .stApp h3, .stApp h4, .stApp h5, .find .head {{ text-wrap: balance; }}
+.use .q b, .chip, .st-chip, .ev-chip, .tag {{ white-space: nowrap; }}
 .block-container {{ padding-top: 3.2rem; max-width: 1280px; }}
 h3 {{ letter-spacing: -.01em; color: {NAVY}; }}
 .topbar {{ border-bottom: 1px solid {LINE}; padding-bottom: 18px; margin-bottom: 4px; }}
